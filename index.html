@@ -67,14 +67,13 @@
         <i id="audioIcon" class="fas fa-music"></i>
     </button>
     
-    <!-- Musik latar: Janji Suci - Yovie & Nuno (Saxophone instrumental)
-         Audio saxophone terlampir dan harus berada satu folder dengan file HTML ini. -->
-    <audio id="bgMusic" loop preload="none">
+    <!-- Musik latar: Janji Suci - Yovie & Nuno (Saxophone instrumental) -->
+    <audio id="bgMusic" loop autoplay preload="auto">
         <source src="Yovie%20%26%20The%20Nuno%20-%20Janji%20Suci%20(Saxophone%20Cover%20by%20Bagas%20Anjar)_256kbps.mp3" type="audio/mpeg">
         Browser Anda tidak mendukung pemutar audio HTML5.
     </audio>
 
-    <!-- MAIN CONTAINER - Adaptif di Mobile, Tablet, maupun Desktop -->
+    <!-- MAIN CONTAINER -->
     <div class="w-full max-w-md md:max-w-xl lg:max-w-2xl mx-auto bg-white min-h-screen shadow-2xl relative overflow-hidden border-x border-gray-100">
 
         <!-- COVER / HERO SECTION -->
@@ -131,7 +130,7 @@
                         Tamu Undangan
                     </div>
                 </div>
-                <a href="#quote" class="inline-block bg-sage text-white text-xs tracking-widest uppercase px-8 py-3.5 rounded-full shadow-md hover:bg-charcoal transition-all duration-300 transform hover:scale-105">
+                <a href="#quote" onclick="startAudioOnOpen()" class="inline-block bg-sage text-white text-xs tracking-widest uppercase px-8 py-3.5 rounded-full shadow-md hover:bg-charcoal transition-all duration-300 transform hover:scale-105">
                     Buka Undangan
                 </a>
             </div>
@@ -217,7 +216,6 @@
 
         <!-- COUNTDOWN TIMER -->
         <section class="py-12 bg-sage text-white text-center px-4 sm:px-6 relative overflow-hidden" data-aos="fade-up" data-aos-duration="1000">
-            <!-- Background Ornaments -->
             <div class="absolute -top-10 -left-10 w-32 h-32 opacity-10 text-white pointer-events-none">
                 <svg viewBox="0 0 100 100" fill="currentColor"><path d="M50,0 Q60,40 100,50 Q60,60 50,100 Q40,60 0,50 Q40,40 50,0"/></svg>
             </div>
@@ -332,16 +330,6 @@
                     <p class="text-gray-600">Selamat untuk Farid & Bila! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.</p>
                 </div>
             </div>
-            
-             <div class="mt-8 space-y-3" id="wishesList" data-aos="fade-up" data-aos-duration="1000">
-                <div class="p-4 bg-white rounded-xl text-xs space-y-1 shadow-sm border border-gray-100">
-                    <div class="flex justify-between items-center">
-                        <span class="font-semibold text-charcoal">Trio wek wek</span>
-                        <span class="text-[10px] text-sage font-medium bg-sagelight px-2 py-0.5 rounded">Hadir</span>
-                    </div>
-                    <p class="text-gray-600">Selamat untuk Farid & Bila! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah.</p>
-                </div>
-            </div>
         </section>
 
         <!-- DIGITAL GIFT / ANGPAO -->
@@ -407,27 +395,62 @@
             easing: 'ease-out-cubic'
         });
 
-        // Audio Control
+        // Audio Control & Autoplay Logic
         const bgMusic = document.getElementById('bgMusic');
         const audioIcon = document.getElementById('audioIcon');
         let isPlaying = false;
 
+        function updateAudioUI(playing) {
+            isPlaying = playing;
+            if (playing) {
+                audioIcon.classList.add('fa-spin');
+                audioIcon.classList.replace('fa-music', 'fa-compact-disc');
+            } else {
+                audioIcon.classList.remove('fa-spin');
+                audioIcon.classList.replace('fa-compact-disc', 'fa-music');
+            }
+        }
+
+        function playAudio() {
+            bgMusic.play().then(() => {
+                updateAudioUI(true);
+            }).catch((err) => {
+                console.log("Autoplay diblokir oleh browser. Menunggu interaksi pengguna:", err);
+                updateAudioUI(false);
+            });
+        }
+
+        // Fungsi dipanggil saat tombol 'Buka Undangan' diklik
+        function startAudioOnOpen() {
+            if (!isPlaying) {
+                playAudio();
+            }
+        }
+
         function toggleAudio() {
             if (isPlaying) {
                 bgMusic.pause();
-                audioIcon.classList.remove('fa-spin');
-                audioIcon.classList.replace('fa-compact-disc', 'fa-music');
+                updateAudioUI(false);
             } else {
-                bgMusic.play().then(() => {
-                    audioIcon.classList.add('fa-spin');
-                    audioIcon.classList.replace('fa-music', 'fa-compact-disc');
-                }).catch(() => {
-                    alert('File janji-suci-saxophone.mp3 belum tersedia atau tidak dapat diputar. Letakkan file MP3 di folder yang sama dengan undangan HTML.');
-                });
-                audioIcon.classList.replace('fa-music', 'fa-compact-disc');
+                playAudio();
             }
-            isPlaying = !isPlaying;
         }
+
+        // Jalankan autoplay saat pertama kali halaman dimuat (jika diizinkan browser)
+        window.addEventListener('DOMContentLoaded', () => {
+            playAudio();
+        });
+
+        // Autoplay Fallback pada interaksi (klik/tap) pertama pengguna di mana saja
+        const enableAudioOnFirstTouch = () => {
+            if (!isPlaying) {
+                playAudio();
+            }
+            document.removeEventListener('click', enableAudioOnFirstTouch);
+            document.removeEventListener('touchstart', enableAudioOnFirstTouch);
+        };
+        document.addEventListener('click', enableAudioOnFirstTouch);
+        document.addEventListener('touchstart', enableAudioOnFirstTouch);
 
         // Countdown Timer
         const weddingDate = new Date("Dec 12, 2026 08:00:00").getTime();
