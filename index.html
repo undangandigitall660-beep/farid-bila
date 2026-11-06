@@ -58,6 +58,21 @@
         .animate-float {
             animation: float 4s ease-in-out infinite;
         }
+        
+        /* Pulse & Glow Animation untuk Tombol Buka Undangan */
+        @keyframes pulse-glow {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 4px 15px rgba(138, 154, 134, 0.4);
+            }
+            50% {
+                transform: scale(1.08);
+                box-shadow: 0 8px 25px rgba(138, 154, 134, 0.7);
+            }
+        }
+        .animate-btn-pulse {
+            animation: pulse-glow 2s ease-in-out infinite;
+        }
     </style>
 </head>
 <body class="font-sans text-charcoal bg-cream antialiased selection:bg-sage selection:text-white min-h-screen">
@@ -130,9 +145,12 @@
                         Tamu Undangan
                     </div>
                 </div>
-                <a href="#quote" onclick="startAudioOnOpen()" class="inline-block bg-sage text-white text-xs tracking-widest uppercase px-8 py-3.5 rounded-full shadow-md hover:bg-charcoal transition-all duration-300 transform hover:scale-105">
-                    Buka Undangan
-                </a>
+                <div>
+                    <!-- Tombol Buka Undangan dengan Animasi Pulse & Glow -->
+                    <a href="#quote" onclick="startAudioOnOpen()" class="inline-flex items-center gap-2 bg-sage text-white text-xs tracking-widest uppercase px-8 py-3.5 rounded-full shadow-md hover:bg-charcoal transition-all duration-300 animate-btn-pulse">
+                        <i class="fas fa-envelope-open-text"></i> Buka Undangan
+                    </a>
+                </div>
             </div>
 
             <!-- Bottom Corner Floral Ornaments -->
